@@ -24,22 +24,41 @@ fs.readdir('.', async (err, files) => {
     await Promise.all(promises);
 
     const distanceBetweenTwoColors = (c1, c2) => {
-        const [r1, g1, b1] = c1;
-        const [r2, g2, b2] = c2;
+        const [r1, g1, b1] = c1.split(',', 3);
+        const [r2, g2, b2] = c2.split(',', 3);
+
+        console.log(r1, g1, b1);
+        console.log(r2, g2, b2);
+        // Calculating Euclidean Distance between two colors
         return (r1 - r2) * (r1 - r2) + (g1 - g2) * (g1 - g2) + (b1 - b2) * (b1 - b2);
     };
+
+
+    const euclideanDistance = (c1, c2) => {
+        const v1 = c1.split(',', 3);
+        const v2 = c2.split(',', 3);
+
+        var i,
+            d = 0;
+
+        for (i = 0; i < v1.length; i++) {
+            d += (v1[i] - v2[i]) * (v1[i] - v2[i]);
+        }
+        return Math.sqrt(d);
+    }
 
     const getClosestRGBComponentFromColor = (givenColor, colorList) => {
         let closestDistance = null;
         let closestColor = null;
 
         colorList.forEach(t => {
-            const distance = distanceBetweenTwoColors(t, givenColor);
-            if (closestDistance === null || distance < closestDistance) {
-                closestDistance = distance;
+            const delta = euclideanDistance(t, givenColor);
+            if (closestDistance === null || delta < closestDistance) {
+                closestDistance = delta;
                 closestColor = t;
             }
         });
+        console.log("delta winning =>", closestDistance);
         return closestColor;
     }
 
@@ -51,22 +70,21 @@ fs.readdir('.', async (err, files) => {
     }
 
     const renamePictures = () => {
-        files.forEach((file, index) => {
-            console.log(colorMap[file]);
-            const oldPath = './' + `/${file}`;
-          
-            // lowercasing the filename
-            const newPath = './' + `${index}.jpg`;
-          
+        images.forEach((image, index) => {
+            const oldPath = '.' + `/${image}`;
+            const newPath = '.' + `image-${index}.jpg`;
+
             // Rename file
             fs.rename(
-              oldPath,
-              newPath,
-              err => console.log(err)
+                oldPath,
+                newPath,
+                err => err
             );
-          });
+        });
     }
 
     orderPictures(Object.keys(colorMap), Object.keys(colorMap)[0]);
+    console.log("image list =>", colorMap);
+    console.log("sorted list =>", sortedColor);
     renamePictures();
 });
