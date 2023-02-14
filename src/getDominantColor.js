@@ -74,7 +74,7 @@ fs.readdir('.', async (err, files) => {
             const oldPath = '.' + `/${image}`;
             const newPath = '.' + `image-${index}.jpg`;
 
-            // Rename file
+            // Rename files
             fs.rename(
                 oldPath,
                 newPath,
@@ -84,7 +84,5 @@ fs.readdir('.', async (err, files) => {
     }
 
     orderPictures(Object.keys(colorMap), Object.keys(colorMap)[0]);
-    console.log("image list =>", colorMap);
-    console.log("sorted list =>", sortedColor);
     renamePictures();
 });
